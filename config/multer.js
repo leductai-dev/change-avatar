@@ -3,7 +3,12 @@ const path = require("path");
 const shortid = require("shortid");
 
 module.exports = multer({
+  
   storage: multer.diskStorage({
+    destination: (req, file, callback) => {
+      // Định nghĩa nơi file upload sẽ được lưu lại
+      callback(null, "uploads");
+    },
     filename: (req, file, cb) => {
       cb(null, shortid.generate() + "-" + file.originalname);
     },

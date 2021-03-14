@@ -1,0 +1,23 @@
+.cropimg-container{
+   
+}
+.croper{
+    width: 200px;
+    height: 200px;
+}
+.pre{
+    margin-left: 20px;
+    width: 100px;
+    height: 100px;
+
+}
+.wraper{
+    display: flex;
+    flex-direction: row;
+    justify-content :stretch;
+}
+.btn_save{
+  position: relative;
+  margin: 20px auto;
+  
+}

@@ -1,35 +1,21 @@
 import React, { useEffect, useState } from "react";
-
-import * as ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-//import  * as Essentials from '@ckeditor/ckeditor5-essentials';
-// import SimpleUploadAdapter from '@ckeditor/ckeditor5-upload/src/adapters/simpleuploadadapter';
-
+import ModelChangeImage from './ModelChangeImage';
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import axios from "axios";
-console.log(ClassicEditor.builtinPlugins.map((plugin) => plugin.pluginName));
 const Contacts = () => {
-  const [state, setState] = useState({
-    username: "",
-    email: "",
-    phone: "",
-    content: "",
-  });
-
+  const [show, setShow] = useState(false);
+  const [avatar,setAvatar] = useState('');
   const [photo, setPhoto] = useState([]);
 
-  const handleStateChanges = (event) => {
-    const target = event.target;
+  useEffect(()=>{
+    console.log("componentdidmount")
+    const data = {userId:'123456'}
+     axios
+        .post("http://localhost:2001/get-user-info",data)
+        .then((res) => setAvatar(res.data.user.avatar))
+        .catch((err) =>console.log(err));
+  },[])
 
-    const { name, value } = target;
-
-    setState((val) => ({ ...val, [name]: value }));
-  };
-
-  const ckeditorstate = (event, editor) => {
-    const data = editor.getData();
-    setState((val) => ({ ...val, content: data }));
-    console.log("STATE", { data });
-  };
 
   const handleChangeFile = (e) => {
     console.log(e.target.files[0]);
@@ -37,17 +23,18 @@ const Contacts = () => {
   };
 
   const uploadPhoto = async (data) => {
-    try {
-      const res = await axios.post("http://192.168.100.24:2001/uploads", data);
-
-      console.log(res.data);
-    } catch (error) {
-      console.log(error.response.data);
-    }
+    return new Promise((resolve, reject) => {
+      axios
+        .post("http://localhost:2001/upload-image", data)
+        .then((res) => resolve(res.data))
+        .catch((err) => reject(err));
+    });
   };
+
 
   const handleSubmitForm = (e) => {
     e.preventDefault();
+    console.log("form submit");
     const data = new FormData();
 
     for (let pt of photo) {
@@ -55,97 +42,48 @@ const Contacts = () => {
     }
 
     uploadPhoto(data)
-      .then((res) => console.log(res))
+      .then((res) => console.log(res.result))
       .catch((err) => console.log(err));
   };
+  const _handleSetAvatar=(url)=>{
+    setAvatar(url)
+  }
+  const showEdit = ()=>{
+    if(show){
+      return (
+        <ModelChangeImage _handleSetAvatar={_handleSetAvatar} _handleShowEdit={_handleShowEdit} avatar={avatar}/>
+      )
+    }
+    return null
+  }
+  const _handleShowEdit=(state)=>{
+    setShow(state)
+  }
 
-  console.log("STATE _", state);
+
   return (
-    <div className="container">
+    <div>
+      <div className="container">
       <div className="wrapper">
-        <h1>Contacts Form</h1>
 
         <form onSubmit={handleSubmitForm}>
-          <div className="form-group">
             <div className="form-group">
-              <label>Username</label>
-              <input
-                type="text"
-                className="form-control"
-                name="username"
-                value={state.usermame}
-                onChange={handleStateChanges}
-                placeholder=" Enter Username"
-              />
-            </div>
-            <div className="form-group">
-              <label>Email</label>
-              <input
-                type="text"
-                className="form-control"
-                name="email"
-                value={state.email}
-                onChange={handleStateChanges}
-                placeholder=" Enter Email"
-              />
-            </div>
-            <div className="form-group">
-              <label>Phone Number</label>
-              <input
-                type="text"
-                className="form-control"
-                value={state.phone}
-                onChange={handleStateChanges}
-                name="phone"
-                placeholder=" Enter Phone"
-              />
-            </div>
-            <div className="form-group">
-              <input
-                type="file"
-                onChange={handleChangeFile}
-                className="form-control"
-              />
-            </div>
-            <div className="form-group">
-              <label>Text Content</label>
-              <CKEditor
-                editor={ClassicEditor}
-                onInit={(editor) => {
-                  //// Here the editor is ready to be used
-                }}
-                onChange={ckeditorstate}
-                config={{
-                  // plugins: [ Essentials ],
-                  ckfinder: {
-                    // The URL that the images are uploaded to.
-                    uploadUrl: "http://192.168.100.24:2001/uploads",
-
-                    // Enable the XMLHttpRequest.withCredentials property.
-                    withCredentials: true,
-
-                    // Headers sent along with the XMLHttpRequest to the upload server.
-                    headers: {
-                      "X-CSRF-TOKEN": "CSFR-Token",
-                      Authorization: "Bearer <JSON Web Token>",
-                    },
-                  },
-                }}
-              />
-
-              {/* <textarea type="text"  cols="30" rows="15" value={state.content}   onChange={handleStateChanges} className="form-control" name="content" placeholder=" Enter Phone" /> */}
-            </div>
-          </div>
+            <img src={avatar} alt="" />
+              </div>
+           
           <div className="form-group">
             <input
-              type="submit"
+              type="button"
               className="btn btn-primary"
               name="submit"
-              value="Submit"
+              value="Change"
+              onClick ={()=>{setShow(true)}}
             />
           </div>
         </form>
       </div>
+    </div>
+    {showEdit()}
     </div>
   );
 };
