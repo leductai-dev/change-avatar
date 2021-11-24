@@ -10,8 +10,7 @@ const Contacts = () => {
   useEffect(()=>{
     console.log("componentdidmount")
     const data = {userId:'123456'}
-     axios
-        .post("http://localhost:2001/get-user-info",data)
+     axios.post("http://localhost:2001/get-user-info",data)
         .then((res) => setAvatar(res.data.user.avatar))
         .catch((err) =>console.log(err));
   },[])
@@ -45,6 +44,7 @@ const Contacts = () => {
       .then((res) => console.log(res.result))
       .catch((err) => console.log(err));
   };
+  
   const _handleSetAvatar=(url)=>{
     setAvatar(url)
   }
@@ -68,7 +68,7 @@ const Contacts = () => {
 
         <form onSubmit={handleSubmitForm}>
             <div className="form-group">
-            <img src={avatar} alt="" />
+            <img src={avatar} alt="" width="200px" height="200px" />
               </div>
            
           <div className="form-group">

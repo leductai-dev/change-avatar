@@ -10,7 +10,6 @@ const ImageCrop = (props) => {
   const refImage = useRef(null);
   const {_handleShowEdit,_handleSetAvatar,src} = props
   useEffect(() => {
-    console.log("cpn didmount");
     const cropper = new Cropper(document.getElementById("image"), {
       aspectRatio: 1,
       zoomable: false,
@@ -37,11 +36,15 @@ const ImageCrop = (props) => {
   const handleSubmitForm = (e) => {
     e.preventDefault();
     const {file} = props
+    console.log("file-----------");
+    console.log(file);
     console.log("form submit");
     const data = new FormData();
     for (let pt of file) {
       data.append("photo", pt);
     }
+    console.log("data---------------------")
+    console.log(data)
     uploadPhoto(data)
       .then((res) => {
         _handleShowEdit(false)

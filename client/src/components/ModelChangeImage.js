@@ -25,14 +25,7 @@ const ModelChangeImage = (props) => {
     border-radius: 10px;
     box-shadow: #cccccc -2px 4px 2px -1px;
   `;
-  const WraperImg = styled.div`
-    display: flex;
-    flex-direction: row;
-  `;
-  const PreViewImage = styled.div``;
-  const CropImage = styled.div``;
 
-  const BtnSave = styled.div``;
 
   const handleChangeFile = (e) => {
     var file = e.target.files[0];
@@ -44,7 +37,7 @@ const ModelChangeImage = (props) => {
     };
     fileReader.readAsDataURL(file);
   };
-  console.log(photo);
+ 
   const uploadPhoto = async (data) => {
     return new Promise((resolve, reject) => {
       axios

@@ -22,7 +22,7 @@ const app = express();
 app.use(bodyParser.json({limit: "50mb"}));
 app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
 const corsOptions = {
-  origin: "http://localhost:3000/",
+  origin: ["http://localhost:3000/","http://localhost:3001/","http://localhost:4000/"],
   optionsSuccessStatus: 200,
 };
 
@@ -107,57 +107,35 @@ app.post("/upload-image",upload.single("photo"), async (req, res,next) => {
   try {
      if (!req.body)
       return res.status(400).json({ message: "No file to upload" });
-        // var aryKey =await Object.keys(req.body)[0]
-     /*    fs.writeFileSync('outc.png', req.body.value, {encoding: 'base64'}, function(err) {
-          console.log('File created');
-      }); */
+   
       const result = await cloudinary.uploader.upload(req.body.value, {
         public_id: "image"+shortid.generate(),
-        background_removal: "cloudinary_ai",
         notification_url: "http://localhost:3000/"
       });
-      console.log(result.url);
-      model.findOne({userId:'123456'})
-      .then((user)=>{
-          if(user){
-            model.updateOne({userId:'123456'},{
-                "name":"Tài Đức Lê",
-                "avatar":result.url
-            }).then(()=>{
-               return res.status(201).json({
-                message:"Update avatar url thành công"
-             });
-            }).catch(()=>{
-              return res.status(401).json({
-                message:"Update avatar người dùng không thành thành công"
-             });
-            })
-          }
-          else{
-              return res.status(401).json({
-                message:"Người dùng không tồn tại!"
-             });
-            }
-      })
-      .catch(next)
-     /*  var object = {
-        userId:"123456",
-          username:"Tai le",
-          password:"123444444",
-          phone:"01234567",
-          avatar:"htppl-url",
-      }
-      const user = new model(object)
-      user.save(err=>{
-     if(!err){ 
-      return res.status(200).json({
-        message:"Luu thanh cong"
+      return res.status(201).json({
+        message:result.url
      });
-     }
-     return res.status(401).json({
-      message:"Chua luu duoc"
-     }) }) */
-
+      // model.findOne({userId:'123456'})
+      // .then((user)=>{
+      //     if(user){
+      //       model.updateOne({userId:'123456'},{
+      //           "name":"Tài Đức Lê",
+      //           "avatar":result.url
+      //       }).then(()=>{
+              
+      //       }).catch(()=>{
+      //         return res.status(401).json({
+      //           message:"Update avatar người dùng không thành thành công"
+      //        });
+      //       })
+      //     }
+      //     else{
+      //         return res.status(401).json({
+      //           message:"Người dùng không tồn tại!"
+      //        });
+      //       }
+      // })
+      // .catch(next)
   } catch (error) {
     console.log(error)
   }
